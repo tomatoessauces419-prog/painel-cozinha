@@ -1,5 +1,5 @@
 (function(){
-var LS='mc_state',CF='mc_cfg',ED=0,PA=0,pi=0,tc=0,VW=0,pt,last=new Date().getTime();
+var LS='mc_state',CF='mc_cfg',ED=0,PA=0,pi=0,tc=0,VW=0,VE=0,pt,last=new Date().getTime();
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function tr(s){return String(s).replace(/^\s+|\s+$/g,'')}
@@ -46,16 +46,31 @@ function save(){S.ts=new Date().getTime();jset(LS,S);clearTimeout(pt);pt=setTime
 var W={};
 W.relogio={html:function(w){return '<div class="clk" id="k'+w.id+'"></div><div class="wx" id="x'+w.id+'">Carregando clima…</div>'},
 ed:function(w){return '<label>Latitude do clima</label><input data-k="lat" value="'+esc(w.d.lat)+'"><label>Longitude do clima</label><input data-k="lon" value="'+esc(w.d.lon)+'">'}};
-W.links={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<a class="lk" target="_blank" href="'+esc(a[i].u)+'">'+esc(a[i].t)+'</a>';return h||'<p class="sm">Sem atalhos. Use Editar painel para adicionar.</p>'},
-ed:function(w){var a=w.d.i,v=[];for(var i=0;i<a.length;i++)v.push(a[i].t+' | '+a[i].u);
-return '<label>Um por linha: Título | endereço</label><textarea rows="5" data-k="i">'+esc(v.join('\n'))+'</textarea>'}};
+var CH=[['Spotify','https://open.spotify.com'],['YouTube','https://www.youtube.com'],['YouTube Music','https://music.youtube.com'],['Google','https://www.google.com']];
+function nu(u){u=tr(u);return /^https?:/i.test(u)?u:'https://'+u}
+W.links={html:function(w,E){var h='',a=w.d.i;
+for(var i=0;i<a.length;i++)h+=E?'<div class="it"><button class="rm" data-act="lr" data-ix="'+i+'">×</button>'+esc(a[i].t)+'</div>':'<a class="lk" target="_blank" href="'+esc(a[i].u)+'">'+esc(a[i].t)+'</a>';
+if(E){h+='<label>Adicionar com um toque</label><p>';for(var j=0;j<CH.length;j++)h+='<button data-act="lq" data-t="'+CH[j][0]+'" data-u="'+CH[j][1]+'">+ '+CH[j][0]+'</button>';
+h+='</p><label>Ou digite o nome e o endereço do site</label><input class="ln" placeholder="Nome (ex.: Receitas da vovó)"><input class="lu" placeholder="Endereço (ex.: panelinha.com.br)" style="margin-top:6px"><button data-act="la">Adicionar atalho</button>'}
+return h||'<p class="sm">Nenhum atalho ainda. Toque em ✎ Editar.</p>'}};
 W.nota={html:function(w){return '<textarea rows="9" data-k="x">'+esc(w.d.x)+'</textarea>'}};
-W.lista={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<div class="it'+(a[i].d?' dn':'')+'">'+(ED?'<button class="rm" data-act="rm" data-ix="'+i+'">×</button>':'')+'<span data-act="tg" data-ix="'+i+'">'+(a[i].d?'☑ ':'☐ ')+esc(a[i].t)+'</span></div>';
+W.lista={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<div class="it'+(a[i].d?' dn':'')+'"><button class="rm" data-act="rm" data-ix="'+i+'">×</button><span data-act="tg" data-ix="'+i+'">'+(a[i].d?'☑ ':'☐ ')+esc(a[i].t)+'</span></div>';
 return h+'<p><input class="ai" placeholder="Novo item"><button data-act="ad">Adicionar</button></p>'}};
-W.fotos={html:function(w){if(!w.d.u.length)return '<p class="sm">Sem fotos. Use Editar painel e cole links de imagens.</p>';
-return '<div class="ph"><img id="p'+w.id+'" alt=""></div><div class="pc"><button data-act="pv">◀</button><button data-act="pp">Pausar / Retomar</button><button data-act="nx">▶</button></div>'},
-ed:function(w){return '<label>Um link de imagem por linha</label><textarea rows="5" data-k="u">'+esc(w.d.u.join('\n'))+'</textarea>'}};
+W.fotos={html:function(w,E){var u=w.d.u,h='';
+if(u.length&&!E)h+='<div class="ph"><img id="p'+w.id+'" alt=""></div><div class="pc"><button data-act="pv">◀</button><button data-act="pp">Pausar / Retomar</button><button data-act="nx">▶</button></div>';
+if(E){for(var i=0;i<u.length;i++)h+='<div class="it"><button class="rm" data-act="pr" data-ix="'+i+'">×</button>Foto '+(i+1)+'</div>';
+h+='<label>Enviar fotos do computador (precisa de conta em Ajustes)</label><input type="file" accept="image/*" multiple data-up="1"><label>Ou colar o link de uma imagem</label><input class="pu" placeholder="https://..."><button data-act="pa">Adicionar foto</button>'}
+return h||'<p class="sm">Nenhuma foto ainda. Toque em ✎ Editar.</p>'}};
 W.youtube={html:function(w){return '<input id="q'+w.id+'" placeholder="Pesquisar vídeo"><button data-act="ys">Buscar</button><div class="yr" id="r'+w.id+'"></div><div id="v'+w.id+'"></div>'}};
+function rs(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+var b=atob(c.toDataURL('image/jpeg',0.8).split(',')[1]),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);cb(new Blob([u],{type:'image/jpeg'}))};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(f)}
+function up(w,fl,i){if(i>=fl.length){save();rc(w);return}
+st('Enviando foto '+(i+1)+' de '+fl.length+'…',1);
+rs(fl[i],function(bl){if(!bl){up(w,fl,i+1);return}
+var nm=cfg.uid+'/'+new Date().getTime()+'-'+i+'.jpg',r=new XMLHttpRequest();r.open('POST',cfg.url+'/storage/v1/object/fotos/'+nm,true);
+r.setRequestHeader('apikey',cfg.anon);r.setRequestHeader('Authorization','Bearer '+cfg.at);r.setRequestHeader('Content-Type','image/jpeg');
+r.onload=function(){if(r.status==200){w.d.u.push(cfg.url+'/storage/v1/object/public/fotos/'+nm);st('Foto enviada',1)}else st('Erro no envio ('+r.status+'). Entre de novo em Ajustes e confira o SQL.',0);up(w,fl,i+1)};
+r.onerror=function(){st('Falha no envio',0);up(w,fl,i+1)};r.send(bl)})}
 var SW='';for(var q=0;q<6;q++)SW+='<button class="sw k'+q+'" data-act="co" data-co="'+q+'"></button>';
 function tile(w){var d=TY[w.t],h='';
 if(ED){h+='<div class="tb"><button data-act="l">◀</button><button data-act="r">▶</button><button data-act="z" data-z="1">Metade</button><button data-act="z" data-z="3">Inteiro</button><button data-act="x">Excluir</button><br>'+SW+'<button data-act="fs" data-d="-1">A-</button><button data-act="fs" data-d="1">A+</button></div>'+
@@ -63,7 +78,7 @@ if(ED){h+='<div class="tb"><button data-act="l">◀</button><button data-act="r"
 h+='<div class="tl" data-act="open"><div class="ic">'+esc(w.i||d[0])+'</div><div class="tt">'+esc(w.n||d[1])+'</div><div class="ts" id="s'+w.id+'">'+(w.t=='relogio'?'':esc(w.sub==null?d[2]:w.sub))+'</div></div>';
 return '<div class="in k'+(w.c||0)+' f'+(w.f||0)+'">'+h+'</div>'}
 function cardEl(id){var c=$('board').childNodes;for(var i=0;i<c.length;i++)if(c[i].getAttribute&&c[i].getAttribute('data-id')==id)return c[i]}
-function rv(w){var d=TY[w.t];$('vw').innerHTML='<div class="vh"><button data-act="back">‹ Voltar</button><span class="vt">'+esc(w.i||d[0])+' '+esc(w.n||d[1])+'</span></div><div class="in vb k'+(w.c||0)+' f'+(w.f||0)+'">'+W[w.t].html(w)+(ED&&W[w.t].ed?W[w.t].ed(w):'')+'</div>';after();if(w.t=='relogio')wxf(w)}
+function rv(w){var d=TY[w.t],E=ED||VE,eb=(w.t=='links'||w.t=='fotos'||w.t=='relogio')?'<button data-act="ve" style="float:right">'+(E?'Concluir':'✎ Editar')+'</button>':'';$('vw').innerHTML='<div class="vh"><button data-act="back">‹ Voltar</button>'+eb+'<span class="vt">'+esc(w.i||d[0])+' '+esc(w.n||d[1])+'</span></div><div class="in vb k'+(w.c||0)+' f'+(w.f||0)+'">'+W[w.t].html(w,E)+(E&&W[w.t].ed?W[w.t].ed(w):'')+'</div>';after();if(w.t=='relogio')wxf(w)}
 function rc(w){if(VW==w.id){rv(w);return}var e=cardEl(w.id);if(e){e.className='c s'+w.s;e.innerHTML=tile(w)}after()}
 function shw(){$('board').className=VW?'hid':'';$('vw').className=VW?'':'hid';if(VW)$('vw').setAttribute('data-id',VW);else $('vw').removeAttribute('data-id')}
 function render(){if(VW&&!find(VW))VW=0;var h='';for(var i=0;i<S.w.length;i++){var w=S.w[i];h+='<div class="c s'+w.s+'" data-id="'+w.id+'">'+tile(w)+'</div>'}
@@ -107,8 +122,14 @@ function act(b){var a=b.getAttribute('data-act'),c=cardOf(b),w=c?find(c.getAttri
 if(a=='edit'){ED=1;$('pn').className='hid';$('ad').className='';render()}
 else if(a=='done'){ED=0;$('ad').className='hid';render();if(cfg.at)push()}
 else if(a=='cfg'){$('pn').className=$('pn').className=='hid'?'':'hid'}
-else if(a=='open'&&w){VW=w.id;shw();rv(w);window.scrollTo(0,0)}
-else if(a=='back'){VW=0;shw();render()}
+else if(a=='open'&&w){VW=w.id;VE=0;shw();rv(w);window.scrollTo(0,0)}
+else if(a=='ve'){VE=!VE;rv(w)}
+else if(a=='lq'){w.d.i.push({t:b.getAttribute('data-t'),u:b.getAttribute('data-u')});save();rc(w)}
+else if(a=='la'){var u=tr(c.querySelector('.lu').value);if(!u){alert('Digite o endereço do site.');return}w.d.i.push({t:tr(c.querySelector('.ln').value)||u,u:nu(u)});save();rc(w)}
+else if(a=='lr'){w.d.i.splice(ix,1);save();rc(w)}
+else if(a=='pa'){var pu=tr(c.querySelector('.pu').value);if(pu){w.d.u.push(nu(pu));save();rc(w)}}
+else if(a=='pr'){w.d.u.splice(ix,1);save();rc(w)}
+else if(a=='back'){VW=0;VE=0;shw();render()}
 else if(a=='add'){var p=P[$('addt').selectedIndex];S.w.push({id:'w'+new Date().getTime(),t:p.k,s:p.s,n:p.n,i:p.i,sub:p.sub,d:JSON.parse(JSON.stringify(p.d))});save();render()}
 else if((a=='l'&&i>0)||(a=='r'&&i<S.w.length-1)){var j=a=='l'?i-1:i+1,t=S.w[i];S.w[i]=S.w[j];S.w[j]=t;save();render()}
 else if(a=='z'){w.s=+b.getAttribute('data-z');save();rc(w)}
@@ -129,6 +150,7 @@ document.addEventListener('touchstart',function(){last=new Date().getTime()},fal
 document.addEventListener('input',function(e){var t=e.target,k=t.getAttribute('data-k');if(k=='x'){var c=cardOf(t);if(c){find(c.getAttribute('data-id')).d.x=t.value;save()}}});
 document.addEventListener('change',function(e){var t=e.target,k=t.getAttribute('data-k'),s=t.getAttribute('data-s');
 if(s){S.set[s]=(s=='sec'||s=='idle'||s=='th')?(parseInt(t.value,10)||(s=='th'?0:8)):tr(t.value);save();if(s=='bg'||s=='th')render();return}
+if(t.getAttribute('data-up')){var cc=cardOf(t),ww=cc&&find(cc.getAttribute('data-id'));if(!cfg.at){alert('Para enviar fotos, entre na conta em Ajustes (ícone do canto).');return}if(ww&&t.files&&t.files.length)up(ww,t.files,0);return}
 if(!k)return;var c=cardOf(t);if(!c)return;var w=find(c.getAttribute('data-id')),v=t.value;
 if(k=='n')w.n=v;else if(k=='sub')w.sub=v;else if(k=='ic')w.i=v;else if(k=='x')w.d.x=v;else if(k=='lat'||k=='lon')w.d[k]=parseFloat(v)||0;
 else if(k=='u')w.d.u=lines(v);else if(k=='i')w.d.i=pl(v);

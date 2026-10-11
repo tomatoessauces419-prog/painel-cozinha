@@ -48,3 +48,4 @@ label{display:block;margin:10px 0 3px;font-size:15px;color:#b6c4d0}
 #saver{position:fixed;left:0;top:0;right:0;bottom:0;background:#000;z-index:9}
 #saver img{max-width:100%;max-height:100%;position:absolute;left:0;right:0;top:0;bottom:0;margin:auto}
 @media(max-width:480px){.s1{width:100%}h1{font-size:28px}}
+[data-act]{cursor:pointer;-webkit-tap-highlight-color:rgba(255,255,255,.15)}
