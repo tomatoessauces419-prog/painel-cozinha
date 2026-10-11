@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teste</title></head>
+<body style="font:20px Helvetica;padding:16px"><h2>Teste no iPad</h2>
+<p>Supabase URL (opcional): <input id="u" style="width:100%;font-size:18px"></p>
+<button onclick="go()" style="font-size:20px;padding:12px">Testar</button><pre id="o"></pre>
+<script>
+function t(n,u){var r=new XMLHttpRequest();r.open('GET',u,true);r.timeout=12000;
+r.onload=function(){o.textContent+=n+': OK (codigo '+r.status+')\n'};
+r.onerror=r.ontimeout=function(){o.textContent+=n+': FALHOU (sem conexao segura)\n'};r.send()}
+function go(){o.textContent='';t('Clima','https://api.open-meteo.com/v1/forecast?latitude=-23.5&longitude=-46.6&current_weather=true');
+t('YouTube API','https://www.googleapis.com/youtube/v3/search?part=snippet&q=a');var u=document.getElementById('u').value;if(u)t('Supabase',u.replace(/\/+$/,'')+'/auth/v1/settings');
+var o=document.getElementById('o');
+</script></body></html>

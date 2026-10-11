@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Minha Cozinha</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div id="top"><h1>Minha Cozinha</h1><span id="st"></span>
+<div id="bar"><button data-act="cfg">Conta e ajustes</button><button id="eb" data-act="edit">Editar painel</button></div></div>
+<div id="ad" class="hid"><select id="addt"></select><button data-act="add">Adicionar</button><button data-act="done">Salvar e sair</button></div>
+<div id="board"></div>
+<div id="pn" class="hid"><div class="box">
+<h2>Conta e ajustes</h2>
+<p class="sm">Sem conta, tudo fica salvo só neste aparelho. Com conta, o painel sincroniza entre PC e iPad.</p>
+<label>Supabase URL</label><input id="c_url" placeholder="https://xxxx.supabase.co">
+<label>Supabase chave pública (anon)</label><input id="c_anon">
+<label>E-mail</label><input id="c_em" type="email"><label>Senha</label><input id="c_pw" type="password">
+<p><button data-act="in">Entrar</button> <button data-act="su">Criar conta</button> <button data-act="out">Sair</button> <button data-act="sy">Sincronizar agora</button></p>
+<label>Segundos por foto</label><input data-s="sec" type="number">
+<label>Tela parada: mostrar fotos após (segundos)</label><input data-s="idle" type="number">
+<label>Imagem de fundo (link, opcional)</label><input data-s="bg">
+<label>Chave da YouTube API (opcional)</label><input data-s="ytKey">
+<p><button data-act="cfg">Fechar</button></p></div></div>
+<div id="saver" class="hid"><img id="sv" alt=""></div>
+<script src="app.js"></script></body></html>
