@@ -61,7 +61,7 @@ if(u.length&&!E)h+='<div class="ph"><img id="p'+w.id+'" alt=""></div><div class=
 if(E){for(var i=0;i<u.length;i++)h+='<div class="it"><button class="rm" data-act="pr" data-ix="'+i+'">×</button>Foto '+(i+1)+'</div>';
 h+='<label>Enviar fotos do computador (precisa de conta em Ajustes)</label><input type="file" accept="image/*" multiple data-up="1"><label>Ou colar o link de uma imagem</label><input class="pu" placeholder="https://..."><button data-act="pa">Adicionar foto</button>'}
 return h||'<p class="sm">Nenhuma foto ainda. Toque em ✎ Editar.</p>'}};
-W.youtube={html:function(w){return '<input id="q'+w.id+'" placeholder="Pesquisar vídeo"><button data-act="ys">Buscar</button><div class="yr" id="r'+w.id+'"></div><div id="v'+w.id+'"></div>'}};
+W.youtube={html:function(w){return '<input id="q'+w.id+'" placeholder="Pesquisar vídeo"><button data-act="ys">Buscar</button><div id="v'+w.id+'"></div><div class="yr" id="r'+w.id+'"></div>'}};
 function rs(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
 var b=atob(c.toDataURL('image/jpeg',0.8).split(',')[1]),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);cb(new Blob([u],{type:'image/jpeg'}))};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(f)}
 function up(w,fl,i){if(i>=fl.length){save();rc(w);return}
@@ -99,9 +99,10 @@ function ys(w){var q=$('q'+w.id).value,k=S.set.ytKey;if(!tr(q))return;
 if(!k){window.open('https://www.youtube.com/results?search_query='+encodeURIComponent(q));return}
 $('r'+w.id).innerHTML='Buscando…';
 xhr('GET','https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q='+encodeURIComponent(q)+'&key='+encodeURIComponent(k),{},null,function(s,j){
-var h='';if(s==200&&j&&j.items){for(var i=0;i<j.items.length;i++){var it=j.items[i];h+='<div class="yv" data-act="yv" data-v="'+esc(it.id.videoId)+'"><img src="'+esc(it.snippet.thumbnails.medium.url)+'" alt=""><b>'+esc(it.snippet.title)+'</b><br><small>'+esc(it.snippet.channelTitle)+'</small></div>'}}
+var h='';if(s==200&&j&&j.items){for(var i=0;i<j.items.length;i++){var it=j.items[i];h+='<div class="yv" data-act="yv" data-v="'+esc(it.id.videoId)+'" data-tt="'+esc(it.snippet.title)+'"><img src="'+esc(it.snippet.thumbnails.medium.url)+'" alt=""><b>'+esc(it.snippet.title)+'</b><br><small>'+esc(it.snippet.channelTitle)+'</small></div>'}}
 else h='Pesquisa indisponível ('+s+'). Verifique a chave em Ajustes.';$('r'+w.id).innerHTML=h})}
-function yv(w,id){$('v'+w.id).innerHTML='<iframe src="https://www.youtube.com/embed/'+esc(id)+'?playsinline=1" allowfullscreen></iframe><p><a class="lk" target="_blank" href="https://www.youtube.com/watch?v='+esc(id)+'">Abrir no YouTube</a></p>'}
+function yv(w,id,t){var e=$('v'+w.id);e.innerHTML='<div class="yb"><b>'+esc(t||'Vídeo selecionado')+'</b><a class="lk" target="_blank" href="https://www.youtube.com/watch?v='+esc(id)+'">▶ Abrir no YouTube</a><button data-act="yp" data-v="'+esc(id)+'">Tentar assistir aqui</button><div id="pf'+w.id+'"></div></div>';if(e.scrollIntoView)e.scrollIntoView(true)}
+function yp(w,id){$('pf'+w.id).innerHTML='<iframe src="https://www.youtube.com/embed/'+esc(id)+'?playsinline=1" allowfullscreen></iframe><p class="sm">Se ficar preto ou der erro, use o botão Abrir no YouTube (o Safari antigo pode não tocar vídeo embutido).</p>'}
 // ---- sincronização (Supabase via REST/XMLHttpRequest)
 function api(m,p,b,x,cb,re){var h={apikey:cfg.anon,Authorization:'Bearer '+cfg.at,'Content-Type':'application/json'};for(var k in x)h[k]=x[k];
 xhr(m,cfg.url+p,h,b,function(s,j){if(s==401&&cfg.rt&&!re){xhr('POST',cfg.url+'/auth/v1/token?grant_type=refresh_token',{apikey:cfg.anon,'Content-Type':'application/json'},{refresh_token:cfg.rt},function(s2,j2){
@@ -140,7 +141,7 @@ else if(a=='tg'){w.d.i[ix].d=!w.d.i[ix].d;save();rc(w)}
 else if(a=='rm'){w.d.i.splice(ix,1);save();rc(w)}
 else if(a=='ad'){var v=tr(c.querySelector('.ai').value);if(v){w.d.i.push({t:v,d:0});save();rc(w)}}
 else if(a=='pp')PA=!PA;else if(a=='pv'){pi--;showPh()}else if(a=='nx'){pi++;showPh()}
-else if(a=='ys')ys(w);else if(a=='yv')yv(w,b.getAttribute('data-v'));
+else if(a=='ys')ys(w);else if(a=='yv')yv(w,b.getAttribute('data-v'),b.getAttribute('data-tt'));else if(a=='yp')yp(w,b.getAttribute('data-v'));
 else if(a=='in')auth(0);else if(a=='su')auth(1);else if(a=='sy'){pull()}
 else if(a=='out'){cfg={};jset(CF,cfg);st('Modo local',1)}}
 document.addEventListener('click',function(e){last=new Date().getTime();
