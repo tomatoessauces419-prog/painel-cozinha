@@ -37,3 +37,12 @@ label{display:block;margin:10px 0 3px;font-size:15px;color:#6b7b71}
 #saver img{max-width:100%;max-height:100%;position:absolute;left:0;right:0;top:0;bottom:0;margin:auto}
 @media(max-width:800px){.s1{width:50%}.s2,.s3{width:100%}}
 @media(max-width:480px){.s1{width:100%}}
+.b1{background-color:#fff}.b2{background-color:#f3ece0}.b3{background-color:#1f2a24}
+.b3 h1,.b3 #st{color:#e6efe8}
+.in.k1,.sw.k1{background:#e4f1e7}.in.k2,.sw.k2{background:#e3edf8}.in.k3,.sw.k3{background:#fbf0d4}
+.in.k4,.sw.k4{background:#f8e2e5}.in.k5,.sw.k5{background:#2f3e35}.sw.k0{background:#fff}
+.k5{color:#f1f6f2}.k5 h2,.k5 .clk b,.k5 .wx b{color:#cfe5d6}.k5 .clk span,.k5 .sm{color:#b5c7bb}
+.k5 .lk{background:#41564a;color:#fff}.k5 .it{border-color:#41564a}.k5 .it.dn span{color:#8fa597}
+.tb .sw{width:34px;height:34px;padding:0;margin:6px 4px 3px;border:2px solid #9fb8a8}
+.f1{font-size:24px}.f2{font-size:28px}.f1 .clk span,.f2 .clk span{font-size:inherit}
+.f1 h2{font-size:26px}.f2 h2{font-size:30px}

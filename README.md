@@ -38,7 +38,7 @@ Limites gratuitos e pausa por inatividade mudam com o tempo: confira em supabase
 6. Cole a chave em **Conta e ajustes → Chave da YouTube API**. Ela fica na sua conta Supabase (protegida), nunca no GitHub. Sem chave, o botão Buscar abre o YouTube.
 
 ## Usar no dia a dia
-- **Editar painel**: adicionar widgets, ◀ ▶ mover, P/M/G tamanho, Excluir, editar títulos, links e fotos. **Salvar e sair** envia ao Supabase.
+- **Editar painel**: adicionar widgets, 6 cores e A−/A+ por cartão (cor do fundo em Conta e ajustes), ◀ ▶ mover, P/M/G tamanho, Excluir, editar títulos, links e fotos. **Salvar e sair** envia ao Supabase.
 - **Fotos**: cole links diretos de imagens (terminam em .jpg/.png). Com a tela parada, a apresentação aparece sozinha; toque para sair.
 - **Tela do iPad**: Ajustes → Geral → Bloqueio Automático → **Nunca**. No Safari: Compartilhar → **Adicionar à Tela de Início** para abrir em tela cheia.
 

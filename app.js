@@ -47,15 +47,16 @@ W.fotos={html:function(w){if(!w.d.u.length)return '<p class="sm">Sem fotos. Use 
 return '<div class="ph"><img id="p'+w.id+'" alt=""></div><div class="pc"><button data-act="pv">◀</button><button data-act="pp">Pausar / Retomar</button><button data-act="nx">▶</button></div>'},
 ed:function(w){return '<label>Um link de imagem por linha</label><textarea rows="5" data-k="u">'+esc(w.d.u.join('\n'))+'</textarea>'}};
 W.youtube={html:function(w){return '<input id="q'+w.id+'" placeholder="Pesquisar vídeo"><button data-act="ys">Buscar</button><div class="yr" id="r'+w.id+'"></div><div id="v'+w.id+'"></div>'}};
+var SW='';for(var q=0;q<6;q++)SW+='<button class="sw k'+q+'" data-act="co" data-co="'+q+'"></button>';
 function card(w){var h='';
-if(ED){var i='data-id="'+w.id+'"';h+='<div class="tb"><button data-act="l">◀</button><button data-act="r">▶</button><button data-act="z" data-z="1">P</button><button data-act="z" data-z="2">M</button><button data-act="z" data-z="3">G</button><button data-act="x">Excluir</button></div><input class="ti" data-k="n" value="'+esc(w.n)+'" placeholder="Título (pode usar emoji)">'}
+if(ED){var i='data-id="'+w.id+'"';h+='<div class="tb"><button data-act="l">◀</button><button data-act="r">▶</button><button data-act="z" data-z="1">P</button><button data-act="z" data-z="2">M</button><button data-act="z" data-z="3">G</button><button data-act="x">Excluir</button><br>'+SW+'<button data-act="fs" data-d="-1">A-</button><button data-act="fs" data-d="1">A+</button></div><input class="ti" data-k="n" value="'+esc(w.n)+'" placeholder="Título (pode usar emoji)">'}
 else if(w.n&&w.t!='relogio')h+='<h2>'+esc(w.n)+'</h2>';
-h+=W[w.t].html(w);if(ED&&W[w.t].ed)h+=W[w.t].ed(w);return '<div class="in">'+h+'</div>'}
+h+=W[w.t].html(w);if(ED&&W[w.t].ed)h+=W[w.t].ed(w);return '<div class="in k'+(w.c||0)+' f'+(w.f||0)+'">'+h+'</div>'}
 function cardEl(id){var c=$('board').childNodes;for(var i=0;i<c.length;i++)if(c[i].getAttribute&&c[i].getAttribute('data-id')==id)return c[i]}
 function rc(w){var e=cardEl(w.id);if(e){e.className='c s'+w.s;e.innerHTML=card(w)}after()}
 function render(){var h='';for(var i=0;i<S.w.length;i++){var w=S.w[i];h+='<div class="c s'+w.s+'" data-id="'+w.id+'">'+card(w)+'</div>'}
 $('board').innerHTML=h||'<p class="em">Painel vazio. Toque em Editar painel para adicionar widgets.</p>';
-document.body.style.backgroundImage=S.set.bg?'url("'+String(S.set.bg).replace(/"/g,'')+'")':'none';after();for(var j=0;j<S.w.length;j++)if(S.w[j].t=='clima')wxf(S.w[j])}
+document.body.className='b'+(S.set.th||0);document.body.style.backgroundImage=S.set.bg?'url("'+String(S.set.bg).replace(/"/g,'')+'")':'none';after();for(var j=0;j<S.w.length;j++)if(S.w[j].t=='clima')wxf(S.w[j])}
 function after(){clock();showPh()}
 function clock(){var d=new Date(),h='<b>'+hm()+'</b><span>'+DM[d.getDay()]+', '+d.getDate()+' de '+MS[d.getMonth()]+'</span>';
 for(var i=0;i<S.w.length;i++)if(S.w[i].t=='relogio'){var e=$('k'+S.w[i].id);if(e)e.innerHTML=h}}
@@ -96,6 +97,8 @@ else if(a=='cfg'){$('pn').className=$('pn').className=='hid'?'':'hid'}
 else if(a=='add'){var p=P[$('addt').selectedIndex];S.w.push({id:'w'+new Date().getTime(),t:p.k,s:p.s,n:p.n,d:JSON.parse(JSON.stringify(p.d))});save();render()}
 else if((a=='l'&&i>0)||(a=='r'&&i<S.w.length-1)){var j=a=='l'?i-1:i+1,t=S.w[i];S.w[i]=S.w[j];S.w[j]=t;save();render()}
 else if(a=='z'){w.s=+b.getAttribute('data-z');save();rc(w)}
+else if(a=='co'){w.c=+b.getAttribute('data-co');save();rc(w)}
+else if(a=='fs'){w.f=Math.max(0,Math.min(2,(w.f||0)+(+b.getAttribute('data-d'))));save();rc(w)}
 else if(a=='x'){if(confirm('Excluir este widget?')){S.w.splice(i,1);save();render()}}
 else if(a=='tg'){w.d.i[ix].d=!w.d.i[ix].d;save();rc(w)}
 else if(a=='rm'){w.d.i.splice(ix,1);save();rc(w)}
@@ -110,7 +113,7 @@ var b=e.target;while(b&&b.getAttribute&&!b.getAttribute('data-act'))b=b.parentNo
 document.addEventListener('touchstart',function(){last=new Date().getTime()},false);
 document.addEventListener('input',function(e){var t=e.target,k=t.getAttribute('data-k');if(k=='x'){var c=cardOf(t);if(c){find(c.getAttribute('data-id')).d.x=t.value;save()}}});
 document.addEventListener('change',function(e){var t=e.target,k=t.getAttribute('data-k'),s=t.getAttribute('data-s');
-if(s){S.set[s]=(s=='sec'||s=='idle')?(parseInt(t.value,10)||8):tr(t.value);save();if(s=='bg')render();return}
+if(s){S.set[s]=(s=='sec'||s=='idle')?(parseInt(t.value,10)||8):tr(t.value);save();if(s=='bg'||s=='th')render();return}
 if(!k)return;var c=cardOf(t);if(!c)return;var w=find(c.getAttribute('data-id')),v=t.value;
 if(k=='n')w.n=v;else if(k=='x')w.d.x=v;else if(k=='lat'||k=='lon')w.d[k]=parseFloat(v)||0;
 else if(k=='u')w.d.u=lines(v);else if(k=='i')w.d.i=pl(v);
