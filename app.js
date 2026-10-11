@@ -1,5 +1,5 @@
 (function(){
-var LS='mc_state',CF='mc_cfg',ED=0,PA=0,pi=0,tc=0,pt,last=new Date().getTime();
+var LS='mc_state',CF='mc_cfg',ED=0,PA=0,pi=0,tc=0,VW=0,pt,last=new Date().getTime();
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function tr(s){return String(s).replace(/^\s+|\s+$/g,'')}
@@ -10,21 +10,31 @@ r.onload=function(){var j=null;try{j=JSON.parse(r.responseText)}catch(e){}cb(r.s
 r.onerror=r.ontimeout=function(){cb(0,null)};r.send(b?JSON.stringify(b):null)}
 var DM=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 var MS=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-function seed(){return{ts:0,set:{sec:8,idle:120,bg:'',ytKey:''},w:[
-{id:'w1',t:'relogio',s:2,n:'',d:{}},{id:'w2',t:'clima',s:1,n:'Clima',d:{lat:-23.55,lon:-46.63}},
-{id:'w3',t:'fotos',s:2,n:'Fotos',d:{u:[]}},
-{id:'w4',t:'links',s:1,n:'Atalhos',d:{i:[{t:'YouTube',u:'https://www.youtube.com'},{t:'Google',u:'https://www.google.com'}]}},
-{id:'w5',t:'lista',s:1,n:'Compras',d:{i:[]}},{id:'w6',t:'nota',s:1,n:'Notas',d:{x:''}},
-{id:'w7',t:'youtube',s:3,n:'Vídeos',d:{}}]}}
-var S=jget(LS,null)||seed();if(!S.set)S.set={sec:8,idle:120,bg:'',ytKey:''};
+var TY={relogio:['🕐','Relógio e clima',''],fotos:['📷','Apresentação de fotos','Suas imagens passando automaticamente'],youtube:['🎬','Vídeos','Pesquisar e assistir'],links:['🔗','Atalhos','Abrir seus sites'],lista:['📋','Lista','Itens e tarefas'],nota:['📝','Notas','Anotações rápidas']};
+var REC=[{t:'Tudo Gostoso',u:'https://www.tudogostoso.com.br'},{t:'Panelinha',u:'https://www.panelinha.com.br'}];
+var MUS=[{t:'YouTube Music',u:'https://music.youtube.com'},{t:'Spotify',u:'https://open.spotify.com'}];
+function seed(){return{ts:0,set:{sec:8,idle:120,bg:'',th:0,ytKey:''},w:[
+{id:'w1',t:'fotos',s:3,n:'Apresentação de fotos',i:'📷',sub:'Suas imagens passando automaticamente',d:{u:[]}},
+{id:'w2',t:'youtube',s:1,n:'Vídeos',i:'🎬',sub:'Pesquisar e assistir',d:{}},
+{id:'w3',t:'links',s:1,n:'Receitas',i:'🍳',sub:'Abrir seus sites favoritos',d:{i:REC}},
+{id:'w4',t:'links',s:1,n:'Música',i:'🎵',sub:'Abrir seu serviço musical',d:{i:MUS}},
+{id:'w5',t:'relogio',s:1,n:'Relógio e clima',i:'🕐',sub:'',d:{lat:-23.55,lon:-46.63}},
+{id:'w6',t:'lista',s:1,n:'Compras',i:'📋',sub:'Itens para comprar',d:{i:[]}},
+{id:'w7',t:'nota',s:1,n:'Notas',i:'📝',sub:'Anotações rápidas',d:{x:''}}]}}
+var S=jget(LS,null)||seed();
+function fix(){if(!S.set)S.set={sec:8,idle:120,bg:'',th:0,ytKey:''};var o=[];
+for(var i=0;i<S.w.length;i++){var w=S.w[i];if(w.t=='clima')continue;if(w.t=='relogio'&&w.d.lat==null){w.d.lat=-23.55;w.d.lon=-46.63}o.push(w)}S.w=o}
+fix();
 var cfg=jget(CF,{});
-var P=[{k:'links',l:'Atalhos para sites',n:'Atalhos',s:1,d:{i:[]}},
-{k:'links',l:'Receitas (links)',n:'Receitas',s:1,d:{i:[{t:'Tudo Gostoso',u:'https://www.tudogostoso.com.br'},{t:'Panelinha',u:'https://www.panelinha.com.br'}]}},
-{k:'links',l:'Música (atalhos)',n:'Música',s:1,d:{i:[{t:'YouTube Music',u:'https://music.youtube.com'},{t:'Spotify',u:'https://open.spotify.com'}]}},
-{k:'lista',l:'Lista de compras',n:'Compras',s:1,d:{i:[]}},{k:'lista',l:'Tarefas',n:'Tarefas',s:1,d:{i:[]}},
-{k:'nota',l:'Nota rápida / lembrete',n:'Nota',s:1,d:{x:''}},{k:'fotos',l:'Fotos',n:'Fotos',s:2,d:{u:[]}},
-{k:'relogio',l:'Relógio',n:'',s:2,d:{}},{k:'clima',l:'Clima',n:'Clima',s:1,d:{lat:-23.55,lon:-46.63}},
-{k:'youtube',l:'Pesquisa de vídeos',n:'Vídeos',s:3,d:{}}];
+var P=[{k:'links',l:'Atalhos para sites',n:'Atalhos',i:'🔗',sub:'Abrir seus sites',s:1,d:{i:[]}},
+{k:'links',l:'Receitas (links)',n:'Receitas',i:'🍳',sub:'Abrir seus sites favoritos',s:1,d:{i:REC}},
+{k:'links',l:'Música (atalhos)',n:'Música',i:'🎵',sub:'Abrir seu serviço musical',s:1,d:{i:MUS}},
+{k:'lista',l:'Lista de compras',n:'Compras',i:'📋',sub:'Itens para comprar',s:1,d:{i:[]}},
+{k:'lista',l:'Tarefas',n:'Tarefas',i:'✅',sub:'O que fazer',s:1,d:{i:[]}},
+{k:'nota',l:'Nota / lembrete',n:'Nota',i:'📝',sub:'Anotações rápidas',s:1,d:{x:''}},
+{k:'fotos',l:'Apresentação de fotos',n:'Apresentação de fotos',i:'📷',sub:'Suas imagens passando automaticamente',s:3,d:{u:[]}},
+{k:'relogio',l:'Relógio e clima',n:'Relógio e clima',i:'🕐',sub:'',s:1,d:{lat:-23.55,lon:-46.63}},
+{k:'youtube',l:'Pesquisa de vídeos',n:'Vídeos',i:'🎬',sub:'Pesquisar e assistir',s:1,d:{}}];
 function find(id){for(var i=0;i<S.w.length;i++)if(S.w[i].id==id)return S.w[i]}
 function pos(id){for(var i=0;i<S.w.length;i++)if(S.w[i].id==id)return i}
 function lines(v){var a=v.split('\n'),o=[];for(var i=0;i<a.length;i++){var t=tr(a[i]);if(t)o.push(t)}return o}
@@ -34,13 +44,12 @@ function st(m,ok){$('st').textContent=m;$('st').className=ok?'':'er'}
 function hm(){var d=new Date();return d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes()}
 function save(){S.ts=new Date().getTime();jset(LS,S);clearTimeout(pt);pt=setTimeout(push,1500)}
 var W={};
-W.relogio={html:function(w){return '<div class="clk" id="k'+w.id+'"></div>'}};
-W.clima={html:function(w){return '<div class="wx" id="x'+w.id+'">Carregando…</div>'},
-ed:function(w){return '<label>Latitude</label><input data-k="lat" value="'+esc(w.d.lat)+'"><label>Longitude</label><input data-k="lon" value="'+esc(w.d.lon)+'">'}};
-W.links={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<a class="lk" target="_blank" href="'+esc(a[i].u)+'">'+esc(a[i].t)+'</a>';return h||'<p class="sm">Sem atalhos.</p>'},
+W.relogio={html:function(w){return '<div class="clk" id="k'+w.id+'"></div><div class="wx" id="x'+w.id+'">Carregando clima…</div>'},
+ed:function(w){return '<label>Latitude do clima</label><input data-k="lat" value="'+esc(w.d.lat)+'"><label>Longitude do clima</label><input data-k="lon" value="'+esc(w.d.lon)+'">'}};
+W.links={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<a class="lk" target="_blank" href="'+esc(a[i].u)+'">'+esc(a[i].t)+'</a>';return h||'<p class="sm">Sem atalhos. Use Editar painel para adicionar.</p>'},
 ed:function(w){var a=w.d.i,v=[];for(var i=0;i<a.length;i++)v.push(a[i].t+' | '+a[i].u);
 return '<label>Um por linha: Título | endereço</label><textarea rows="5" data-k="i">'+esc(v.join('\n'))+'</textarea>'}};
-W.nota={html:function(w){return '<textarea rows="7" data-k="x">'+esc(w.d.x)+'</textarea>'}};
+W.nota={html:function(w){return '<textarea rows="9" data-k="x">'+esc(w.d.x)+'</textarea>'}};
 W.lista={html:function(w){var h='',a=w.d.i;for(var i=0;i<a.length;i++)h+='<div class="it'+(a[i].d?' dn':'')+'">'+(ED?'<button class="rm" data-act="rm" data-ix="'+i+'">×</button>':'')+'<span data-act="tg" data-ix="'+i+'">'+(a[i].d?'☑ ':'☐ ')+esc(a[i].t)+'</span></div>';
 return h+'<p><input class="ai" placeholder="Novo item"><button data-act="ad">Adicionar</button></p>'}};
 W.fotos={html:function(w){if(!w.d.u.length)return '<p class="sm">Sem fotos. Use Editar painel e cole links de imagens.</p>';
@@ -48,21 +57,25 @@ return '<div class="ph"><img id="p'+w.id+'" alt=""></div><div class="pc"><button
 ed:function(w){return '<label>Um link de imagem por linha</label><textarea rows="5" data-k="u">'+esc(w.d.u.join('\n'))+'</textarea>'}};
 W.youtube={html:function(w){return '<input id="q'+w.id+'" placeholder="Pesquisar vídeo"><button data-act="ys">Buscar</button><div class="yr" id="r'+w.id+'"></div><div id="v'+w.id+'"></div>'}};
 var SW='';for(var q=0;q<6;q++)SW+='<button class="sw k'+q+'" data-act="co" data-co="'+q+'"></button>';
-function card(w){var h='';
-if(ED){var i='data-id="'+w.id+'"';h+='<div class="tb"><button data-act="l">◀</button><button data-act="r">▶</button><button data-act="z" data-z="1">P</button><button data-act="z" data-z="2">M</button><button data-act="z" data-z="3">G</button><button data-act="x">Excluir</button><br>'+SW+'<button data-act="fs" data-d="-1">A-</button><button data-act="fs" data-d="1">A+</button></div><input class="ti" data-k="n" value="'+esc(w.n)+'" placeholder="Título (pode usar emoji)">'}
-else if(w.n&&w.t!='relogio')h+='<h2>'+esc(w.n)+'</h2>';
-h+=W[w.t].html(w);if(ED&&W[w.t].ed)h+=W[w.t].ed(w);return '<div class="in k'+(w.c||0)+' f'+(w.f||0)+'">'+h+'</div>'}
+function tile(w){var d=TY[w.t],h='';
+if(ED){h+='<div class="tb"><button data-act="l">◀</button><button data-act="r">▶</button><button data-act="z" data-z="1">Metade</button><button data-act="z" data-z="3">Inteiro</button><button data-act="x">Excluir</button><br>'+SW+'<button data-act="fs" data-d="-1">A-</button><button data-act="fs" data-d="1">A+</button></div>'+
+'<input class="ti" data-k="n" value="'+esc(w.n)+'" placeholder="Título">'+(w.t=='relogio'?'':'<input class="ti" data-k="sub" value="'+esc(w.sub)+'" placeholder="Descrição">')+'<input class="ti" data-k="ic" value="'+esc(w.i)+'" placeholder="Ícone (emoji)" style="width:150px">'}
+h+='<div class="tl" data-act="open"><div class="ic">'+esc(w.i||d[0])+'</div><div class="tt">'+esc(w.n||d[1])+'</div><div class="ts" id="s'+w.id+'">'+(w.t=='relogio'?'':esc(w.sub==null?d[2]:w.sub))+'</div></div>';
+return '<div class="in k'+(w.c||0)+' f'+(w.f||0)+'">'+h+'</div>'}
 function cardEl(id){var c=$('board').childNodes;for(var i=0;i<c.length;i++)if(c[i].getAttribute&&c[i].getAttribute('data-id')==id)return c[i]}
-function rc(w){var e=cardEl(w.id);if(e){e.className='c s'+w.s;e.innerHTML=card(w)}after()}
-function render(){var h='';for(var i=0;i<S.w.length;i++){var w=S.w[i];h+='<div class="c s'+w.s+'" data-id="'+w.id+'">'+card(w)+'</div>'}
-$('board').innerHTML=h||'<p class="em">Painel vazio. Toque em Editar painel para adicionar widgets.</p>';
-document.body.className='b'+(S.set.th||0);document.body.style.backgroundImage=S.set.bg?'url("'+String(S.set.bg).replace(/"/g,'')+'")':'none';after();for(var j=0;j<S.w.length;j++)if(S.w[j].t=='clima')wxf(S.w[j])}
+function rv(w){var d=TY[w.t];$('vw').innerHTML='<div class="vh"><button data-act="back">‹ Voltar</button><span class="vt">'+esc(w.i||d[0])+' '+esc(w.n||d[1])+'</span></div><div class="in vb k'+(w.c||0)+' f'+(w.f||0)+'">'+W[w.t].html(w)+(ED&&W[w.t].ed?W[w.t].ed(w):'')+'</div>';after();if(w.t=='relogio')wxf(w)}
+function rc(w){if(VW==w.id){rv(w);return}var e=cardEl(w.id);if(e){e.className='c s'+w.s;e.innerHTML=tile(w)}after()}
+function shw(){$('board').className=VW?'hid':'';$('vw').className=VW?'':'hid';if(VW)$('vw').setAttribute('data-id',VW);else $('vw').removeAttribute('data-id')}
+function render(){if(VW&&!find(VW))VW=0;var h='';for(var i=0;i<S.w.length;i++){var w=S.w[i];h+='<div class="c s'+w.s+'" data-id="'+w.id+'">'+tile(w)+'</div>'}
+$('board').innerHTML=h||'<p class="sm">Painel vazio. Toque no ícone do canto e depois em Editar painel.</p>';
+document.body.className='b'+(S.set.th||0);document.body.style.backgroundImage=S.set.bg?'url("'+String(S.set.bg).replace(/"/g,'')+'")':'none';
+shw();if(VW)rv(find(VW));else after()}
 function after(){clock();showPh()}
-function clock(){var d=new Date(),h='<b>'+hm()+'</b><span>'+DM[d.getDay()]+', '+d.getDate()+' de '+MS[d.getMonth()]+'</span>';
-for(var i=0;i<S.w.length;i++)if(S.w[i].t=='relogio'){var e=$('k'+S.w[i].id);if(e)e.innerHTML=h}}
+function clock(){var d=new Date(),dt=DM[d.getDay()]+', '+d.getDate()+' de '+MS[d.getMonth()];
+for(var i=0;i<S.w.length;i++)if(S.w[i].t=='relogio'){var id=S.w[i].id,e=$('k'+id);if(e)e.innerHTML='<b>'+hm()+'</b><span>'+dt+'</span>';e=$('s'+id);if(e)e.textContent=hm()+' · '+dt}}
 function wxt(c){return c==0?'Céu limpo':c<4?'Nublado':c<50?'Neblina':c<70?'Chuva':c<80?'Neve':c<90?'Pancadas de chuva':'Tempestade'}
 function wxf(w){xhr('GET','https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(w.d.lat)+'&longitude='+encodeURIComponent(w.d.lon)+'&current_weather=true',{},null,function(s,j){
-var e=$('x'+w.id);if(!e)return;e.innerHTML=(s==200&&j&&j.current_weather)?'<b>'+Math.round(j.current_weather.temperature)+'°C</b><br>'+wxt(j.current_weather.weathercode):'Clima indisponível'})}
+var e=$('x'+w.id);if(!e)return;e.innerHTML=(s==200&&j&&j.current_weather)?'<b>'+Math.round(j.current_weather.temperature)+'°C</b> '+wxt(j.current_weather.weathercode):'Clima indisponível'})}
 function allPh(){var o=[];for(var i=0;i<S.w.length;i++)if(S.w[i].t=='fotos')o=o.concat(S.w[i].d.u);return o}
 function pick(a){var n=a.length;return a[((pi%n)+n)%n]}
 function showPh(){for(var i=0;i<S.w.length;i++){var w=S.w[i];if(w.t=='fotos'&&w.d.u.length){var e=$('p'+w.id);if(e)e.src=pick(w.d.u)}}
@@ -72,7 +85,7 @@ if(!k){window.open('https://www.youtube.com/results?search_query='+encodeURIComp
 $('r'+w.id).innerHTML='Buscando…';
 xhr('GET','https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&q='+encodeURIComponent(q)+'&key='+encodeURIComponent(k),{},null,function(s,j){
 var h='';if(s==200&&j&&j.items){for(var i=0;i<j.items.length;i++){var it=j.items[i];h+='<div class="yv" data-act="yv" data-v="'+esc(it.id.videoId)+'"><img src="'+esc(it.snippet.thumbnails.medium.url)+'" alt=""><b>'+esc(it.snippet.title)+'</b><br><small>'+esc(it.snippet.channelTitle)+'</small></div>'}}
-else h='Pesquisa indisponível ('+s+'). Verifique a chave em Conta e ajustes.';$('r'+w.id).innerHTML=h})}
+else h='Pesquisa indisponível ('+s+'). Verifique a chave em Ajustes.';$('r'+w.id).innerHTML=h})}
 function yv(w,id){$('v'+w.id).innerHTML='<iframe src="https://www.youtube.com/embed/'+esc(id)+'?playsinline=1" allowfullscreen></iframe><p><a class="lk" target="_blank" href="https://www.youtube.com/watch?v='+esc(id)+'">Abrir no YouTube</a></p>'}
 // ---- sincronização (Supabase via REST/XMLHttpRequest)
 function api(m,p,b,x,cb,re){var h={apikey:cfg.anon,Authorization:'Bearer '+cfg.at,'Content-Type':'application/json'};for(var k in x)h[k]=x[k];
@@ -82,7 +95,7 @@ function push(){if(!cfg.at)return;api('POST','/rest/v1/panel?on_conflict=user_id
 st(s<300&&s>0?'Sincronizado '+hm():'Erro ao enviar ('+s+')',s<300&&s>0)})}
 function pull(){if(!cfg.at)return;api('GET','/rest/v1/panel?select=state&limit=1',null,{},function(s,j){
 if(s!=200){st('Erro de sincronização ('+s+')',0);return}
-if(j&&j.length){var r=j[0].state;if(r&&r.ts>S.ts){S=r;if(!S.set)S.set=seed().set;jset(LS,S);render()}else if(r&&r.ts<S.ts)push();st('Sincronizado '+hm(),1)}else push()})}
+if(j&&j.length){var r=j[0].state;if(r&&r.ts>S.ts){S=r;fix();jset(LS,S);render()}else if(r&&r.ts<S.ts)push();st('Sincronizado '+hm(),1)}else push()})}
 function auth(su){cfg.url=tr($('c_url').value).replace(/\/+$/,'');cfg.anon=tr($('c_anon').value);
 xhr('POST',cfg.url+(su?'/auth/v1/signup':'/auth/v1/token?grant_type=password'),{apikey:cfg.anon,'Content-Type':'application/json'},{email:tr($('c_em').value),password:$('c_pw').value},function(s,j){
 if(s==200&&j&&j.access_token){cfg.at=j.access_token;cfg.rt=j.refresh_token;cfg.uid=j.user.id;jset(CF,cfg);st('Conectado',1);pull()}
@@ -91,10 +104,12 @@ else st('Falha ('+s+'): '+((j&&(j.msg||j.error_description||j.message))||'sem re
 // ---- ações
 function cardOf(b){while(b&&b.getAttribute&&!b.getAttribute('data-id'))b=b.parentNode;return b&&b.getAttribute&&b.getAttribute('data-id')?b:null}
 function act(b){var a=b.getAttribute('data-act'),c=cardOf(b),w=c?find(c.getAttribute('data-id')):null,i=w?pos(w.id):0,ix=+b.getAttribute('data-ix');
-if(a=='edit'){ED=1;$('ad').className='';$('eb').style.display='none';render()}
-else if(a=='done'){ED=0;$('ad').className='hid';$('eb').style.display='';render();if(cfg.at)push()}
+if(a=='edit'){ED=1;$('pn').className='hid';$('ad').className='';render()}
+else if(a=='done'){ED=0;$('ad').className='hid';render();if(cfg.at)push()}
 else if(a=='cfg'){$('pn').className=$('pn').className=='hid'?'':'hid'}
-else if(a=='add'){var p=P[$('addt').selectedIndex];S.w.push({id:'w'+new Date().getTime(),t:p.k,s:p.s,n:p.n,d:JSON.parse(JSON.stringify(p.d))});save();render()}
+else if(a=='open'&&w){VW=w.id;shw();rv(w);window.scrollTo(0,0)}
+else if(a=='back'){VW=0;shw();render()}
+else if(a=='add'){var p=P[$('addt').selectedIndex];S.w.push({id:'w'+new Date().getTime(),t:p.k,s:p.s,n:p.n,i:p.i,sub:p.sub,d:JSON.parse(JSON.stringify(p.d))});save();render()}
 else if((a=='l'&&i>0)||(a=='r'&&i<S.w.length-1)){var j=a=='l'?i-1:i+1,t=S.w[i];S.w[i]=S.w[j];S.w[j]=t;save();render()}
 else if(a=='z'){w.s=+b.getAttribute('data-z');save();rc(w)}
 else if(a=='co'){w.c=+b.getAttribute('data-co');save();rc(w)}
@@ -113,11 +128,11 @@ var b=e.target;while(b&&b.getAttribute&&!b.getAttribute('data-act'))b=b.parentNo
 document.addEventListener('touchstart',function(){last=new Date().getTime()},false);
 document.addEventListener('input',function(e){var t=e.target,k=t.getAttribute('data-k');if(k=='x'){var c=cardOf(t);if(c){find(c.getAttribute('data-id')).d.x=t.value;save()}}});
 document.addEventListener('change',function(e){var t=e.target,k=t.getAttribute('data-k'),s=t.getAttribute('data-s');
-if(s){S.set[s]=(s=='sec'||s=='idle')?(parseInt(t.value,10)||8):tr(t.value);save();if(s=='bg'||s=='th')render();return}
+if(s){S.set[s]=(s=='sec'||s=='idle'||s=='th')?(parseInt(t.value,10)||(s=='th'?0:8)):tr(t.value);save();if(s=='bg'||s=='th')render();return}
 if(!k)return;var c=cardOf(t);if(!c)return;var w=find(c.getAttribute('data-id')),v=t.value;
-if(k=='n')w.n=v;else if(k=='x')w.d.x=v;else if(k=='lat'||k=='lon')w.d[k]=parseFloat(v)||0;
+if(k=='n')w.n=v;else if(k=='sub')w.sub=v;else if(k=='ic')w.i=v;else if(k=='x')w.d.x=v;else if(k=='lat'||k=='lon')w.d[k]=parseFloat(v)||0;
 else if(k=='u')w.d.u=lines(v);else if(k=='i')w.d.i=pl(v);
-save();if(k!='x'){rc(w);if(w.t=='clima')wxf(w)}});
+save();if(k!='x')rc(w)});
 // ---- início
 (function(){var o='';for(var i=0;i<P.length;i++)o+='<option>'+P[i].l+'</option>';$('addt').innerHTML=o;
 $('c_url').value=cfg.url||'';$('c_anon').value=cfg.anon||'';var f=document.querySelectorAll('[data-s]');for(var j=0;j<f.length;j++)f[j].value=S.set[f[j].getAttribute('data-s')]||''})();
@@ -126,5 +141,5 @@ setInterval(function(){clock();var n=new Date().getTime();tc++;
 if(tc>=(S.set.sec||8)){tc=0;if(!PA){pi++;showPh()}}
 if(!ED&&$('saver').className=='hid'&&$('pn').className=='hid'&&n-last>(S.set.idle||120)*1000&&allPh().length){$('saver').className='';showPh()}},1000);
 setInterval(function(){var a=document.activeElement;if(!ED&&!(a&&(a.tagName=='INPUT'||a.tagName=='TEXTAREA')))pull()},60000);
-setInterval(function(){for(var i=0;i<S.w.length;i++)if(S.w[i].t=='clima')wxf(S.w[i])},900000);
+setInterval(function(){for(var i=0;i<S.w.length;i++)if(S.w[i].t=='relogio')wxf(S.w[i])},900000);
 })();

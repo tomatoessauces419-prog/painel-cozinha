@@ -4,12 +4,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Minha Cozinha</title><link rel="stylesheet" href="style.css"></head>
 <body>
-<div id="top"><h1>Minha Cozinha</h1><span id="st"></span>
-<div id="bar"><button data-act="cfg">Conta e ajustes</button><button id="eb" data-act="edit">Editar painel</button></div></div>
+<div id="top"><div id="hd"><h1>Minha Cozinha</h1><div id="sub">Seu painel pessoal · <span id="st"></span></div></div>
+<button id="gear" data-act="cfg" aria-label="Ajustes"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cfd8e0" stroke-width="2" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></button></div>
 <div id="ad" class="hid"><select id="addt"></select><button data-act="add">Adicionar</button><button data-act="done">Salvar e sair</button></div>
 <div id="board"></div>
+<div id="vw" class="hid"></div>
 <div id="pn" class="hid"><div class="box">
-<h2>Conta e ajustes</h2>
+<h2>Ajustes</h2>
+<p><button data-act="edit">Editar painel</button></p>
 <p class="sm">Sem conta, tudo fica salvo só neste aparelho. Com conta, o painel sincroniza entre PC e iPad.</p>
 <label>Supabase URL</label><input id="c_url" placeholder="https://xxxx.supabase.co">
 <label>Supabase chave pública (anon)</label><input id="c_anon">
@@ -17,7 +19,8 @@
 <p><button data-act="in">Entrar</button> <button data-act="su">Criar conta</button> <button data-act="out">Sair</button> <button data-act="sy">Sincronizar agora</button></p>
 <label>Segundos por foto</label><input data-s="sec" type="number">
 <label>Tela parada: mostrar fotos após (segundos)</label><input data-s="idle" type="number">
-<label>Cor do fundo</label><select data-s="th"><option value="0">Verde claro</option><option value="1">Branco</option><option value="2">Bege</option><option value="3">Escuro</option></select><label>Imagem de fundo (link, opcional)</label><input data-s="bg">
+<label>Cor do fundo</label><select data-s="th"><option value="0">Azul-noite</option><option value="1">Preto</option><option value="2">Verde-floresta</option><option value="3">Claro</option></select>
+<label>Imagem de fundo (link, opcional)</label><input data-s="bg">
 <label>Chave da YouTube API (opcional)</label><input data-s="ytKey">
 <p><button data-act="cfg">Fechar</button></p></div></div>
 <div id="saver" class="hid"><img id="sv" alt=""></div>

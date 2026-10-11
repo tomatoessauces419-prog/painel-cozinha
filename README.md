@@ -38,7 +38,8 @@ Limites gratuitos e pausa por inatividade mudam com o tempo: confira em supabase
 6. Cole a chave em **Conta e ajustes → Chave da YouTube API**. Ela fica na sua conta Supabase (protegida), nunca no GitHub. Sem chave, o botão Buscar abre o YouTube.
 
 ## Usar no dia a dia
-- **Editar painel**: adicionar widgets, 6 cores e A−/A+ por cartão (cor do fundo em Conta e ajustes), ◀ ▶ mover, P/M/G tamanho, Excluir, editar títulos, links e fotos. **Salvar e sair** envia ao Supabase.
+- **Tela inicial**: cartões no estilo escuro; toque num cartão para abrir (Vídeos, Receitas, Música, Relógio e clima, Compras, Notas...) e em **‹ Voltar** para retornar. O ícone no canto superior direito abre os **Ajustes**, onde está o botão **Editar painel**.
+- **Editar painel**: em cada cartão você muda título, descrição, ícone (emoji), cor (6 opções), tamanho da letra (A-/A+), largura (Metade/Inteiro), move com ◀ ▶ e exclui. Toque no cartão em modo de edição para editar o conteúdo (links, fotos, local do clima). **Salvar e sair** envia ao Supabase. A cor do fundo fica em Ajustes.
 - **Fotos**: cole links diretos de imagens (terminam em .jpg/.png). Com a tela parada, a apresentação aparece sozinha; toque para sair.
 - **Tela do iPad**: Ajustes → Geral → Bloqueio Automático → **Nunca**. No Safari: Compartilhar → **Adicionar à Tela de Início** para abrir em tela cheia.
 
